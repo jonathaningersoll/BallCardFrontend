@@ -1,13 +1,13 @@
-const baseUrl = "http://localhost:29163/api/teams";
+const baseUrl = "http://localhost:29163/api/manufacturers";
 
 // Add team screen:
-const addTeamCode = `
-     <h2>Add new team:</h2>
+const addManferCode = `
+     <h2>Add new Manufacturer:</h2>
      <hr />
-     <form action="teams.html" method="post" onsubmit="postTeam(event)">
+     <form action="manufacturers.html" method="post" onsubmit="postManfer(event)">
           <p>
-               <label for="teamname">New team :</label>
-               <input type="text" name="teamname" id="teamname" />
+               <label for="manfername">New team :</label>
+               <input type="text" name="manfername" id="manfername" />
           </p>
           <p>
                <input class="btn btn-primary" type="submit" value="Create" />
@@ -17,21 +17,20 @@ const addTeamCode = `
 
 let screen = document.getElementById('screen');
 
-function viewTeams(json){
-     console.log("viewTeams function hit!")
+function viewManfers(json){
      // SET UP
-     var teams = json;
+     var manfers = json;
      
      let screen = document.getElementById('screen');
      clearOldData(screen);
 
      // PERFORM
      screen.innerHTML += `
-          <h2>Current Teams:</h2><hr/><br>
-          <table id="teamtable">
+          <h2>Current Manufacturers:</h2><hr/><br>
+          <table id="manfertable">
                <tr>
                     <th>
-                         Team:
+                         Manufacturer:
                     </th>
                     <th>
                          Options:
@@ -40,19 +39,19 @@ function viewTeams(json){
      
      `;
 
-     teams.forEach( item => {
-          let teamTable = document.getElementById('teamtable');
+     manfers.forEach( item => {
+          let manferTable = document.getElementById('manfertable');
           let tableRow = document.createElement('tr');
-          let tableDataTeamName = document.createElement('td');
+          let tableDataManferName = document.createElement('td');
           let tableDataOptions = document.createElement('td');
 
-          tableDataTeamName.innerHTML = item.teamName;
+          tableDataManferName.innerHTML = item.manufacturerName;
           tableDataOptions.innerHTML = `
-               <button id="view" class="btn btn-info" onclick="teamDetail(${item.teamId})">View</a>
+               <button id="view" class="btn btn-info" onclick="manferDetail(${item.manufacturerId})">View</a>
                `;
 
-          teamTable.appendChild(tableRow);
-          tableRow.appendChild(tableDataTeamName);
+          manferTable.appendChild(tableRow);
+          tableRow.appendChild(tableDataManferName);
           tableRow.appendChild(tableDataOptions);
      });
 
@@ -69,46 +68,46 @@ function clearOldData(screen){
      }
 }
 
-function addTeam(){
+function addManfer(){
      clearOldData(screen);
-     screen.innerHTML += addTeamCode;
+     screen.innerHTML += addManferCode;
      turnOnDiv();
 }
 
-function PostTeamResponse(info){
-     document.getElementById('screen').innerHTML = addTeamCode + `
-          <h3>Successfully created new Team</h3>
+function postManferResponse(info){
+     document.getElementById('screen').innerHTML = addManferCode + `
+          <h3>Successfully created new manufacturer</h3>
           <p>
-               <strong>Team name:</strong><br />
-               ${info.teamName}
+               <strong>Manufacturer name:</strong><br />
+               ${info.manufacturerName}
           </p>
      `
 }
 
-function viewTeamDetail(data){
+function viewManferDetail(data){
      screen.innerHTML += `
-          <h2>${data.teamName}</h2>
+          <h2>${data.manufacturerName}</h2>
           <hr/>
-          <form action="teams.html" method="put" onsubmit="editTeam(${data.teamId})">
+          <form action="manufacturers.html" method="put" onsubmit="editManufacturer(${data.manufacturerId})">
                <p>
-                    <label for="teamname">Edit team name:</label>
-                    <input type="text" name="teamname" id="teamname" />
+                    <label for="manfername">Edit manufacturer name:</label>
+                    <input type="text" name="manfername" id="manfername" />
                </p>
                <p>
                     <input type="submit" class="btn btn-warning" value="Edit" />
                </p>
           </form>
-          <button id="delete" class="btn btn-danger" onclick="deleteTeamWarning(${data.teamId})">Delete</button>
+          <button id="delete" class="btn btn-danger" onclick="deleteManferWarning(${data.manufacturerId})">Delete</button>
      `;
 }
 
-function deleteTeamWarning(id){
+function deleteManferWarning(id){
      screen.innerHTML += `
           <div class="alert alert-danger" role="alert">
                <p>
-                    Are you sure you want to delete this team?
+                    Are you sure you want to delete this manufacturer?
                </p>
-               <button id="delete" class="btn btn-danger" onclick="deleteTeam(${id})">Delete</button>
+               <button id="delete" class="btn btn-danger" onclick="deleteManfer(${id})">Delete</button>
                <button id="back" class="btn btn-success" onclick="fetchResults()">Go back</button>
           </div>
      `;
@@ -121,10 +120,10 @@ function deleteTeamWarning(id){
 // API CALLS
 
 // CREATE TEAM
-function postTeam(event){
+function postManfer(event){
      event.preventDefault();
-     let team = {
-          'teamname':`${document.getElementById('teamname').value}`,
+     let manufacturer = {
+          'manufacturerName':`${document.getElementById('manfername').value}`,
      }
 
      fetch(baseUrl, {
@@ -132,30 +131,29 @@ function postTeam(event){
           headers: {
                'Content-Type': 'application/json'
           },
-          body: JSON.stringify(team)
+          body: JSON.stringify(manufacturer)
      })
      .then(res => res.json()
      )
-     .then(data => PostTeamResponse(data))
+     .then(data => postManferResponse(data))
 }
 
 // GET ALL TEAMS
 function fetchResults(){
-     console.log("fetchResults function started");
      fetch(baseUrl)
      .then(function(result){
           return result.json();
      })
      .then(function(json){
-          viewTeams(json);
+          viewManfers(json);
      });
 }
 
 // UPDATE TEAM
-function editTeam(id){
-     let team = {
-          'teamId':id,
-          'teamname':`${document.getElementById('teamname').value}`
+function editManufacturer(id){
+     let manfer = {
+          'manufacturerId':id,
+          'manufacturerName':`${document.getElementById('manfername').value}`
      }
 
      fetch(`${baseUrl}/${id}`, {
@@ -163,25 +161,23 @@ function editTeam(id){
           headers: {
                'Content-Type': 'application/json'
           },
-          body: JSON.stringify(team)
+          body: JSON.stringify(manfer)
      })
      .then(res => res.json())
-     .then(data => {console.log(data)
-          fetchResults()});
-
+     .then(fetchResults);
 }
 
 // GET ONE TEAM
-function teamDetail(id){
+function manferDetail(id){
      clearOldData(document.getElementById('screen'));
      
      fetch(`${baseUrl}/${id}`)
      .then(res => res.json())
-     .then(data => viewTeamDetail(data));
+     .then(data => viewManferDetail(data));
 }
 
 // DELETE TEAM
-function deleteTeam(id){
+function deleteManfer(id){
      fetch(`${baseUrl}/${id}`, {
           method: 'DELETE',
           headers: {
@@ -189,6 +185,5 @@ function deleteTeam(id){
           },
           body: JSON.stringify(id)
      })
-     
-     // TODO: WRITE SUCCESS RESPONSE FUNCTION
+     // TODO: WRITE SUCCESS RESPOSNE FUNCTION
 }
