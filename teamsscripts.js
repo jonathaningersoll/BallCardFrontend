@@ -18,7 +18,7 @@ const addTeamCode = `
 let screen = document.getElementById('screen');
 
 function viewTeams(json){
-     
+     console.log("viewTeams function hit!")
      // SET UP
      var teams = json;
      
@@ -141,6 +141,7 @@ function postTeam(event){
 
 // GET ALL TEAMS
 function fetchResults(){
+     console.log("fetchResults function started");
      fetch(baseUrl)
      .then(function(result){
           return result.json();
@@ -165,7 +166,9 @@ function editTeam(id){
           body: JSON.stringify(team)
      })
      .then(res => res.json())
-     .then(data => console.log(data))
+     .then(data => {console.log(data)
+          fetchResults()});
+
 }
 
 // GET ONE TEAM
@@ -186,5 +189,6 @@ function deleteTeam(id){
           },
           body: JSON.stringify(id)
      })
-     .then(viewTeams());
+     
+     // TODO: WRITE SUCCESS RESPONSE FUNCTION
 }
