@@ -109,7 +109,7 @@ function deleteTeamWarning(id){
                     Are you sure you want to delete this team?
                </p>
                <button id="delete" class="btn btn-danger" onclick="deleteTeam(${id})">Delete</button>
-               <button id="back" class="btn btn-success" onclick="toggleWindow('teams')">Go back</button>
+               <button id="back" class="btn btn-success" onclick="fetchResults()">Go back</button>
           </div>
      `;
 }
