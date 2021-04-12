@@ -1,4 +1,5 @@
 const baseUrl = "http://localhost:29163/api/teams";
+
 // Add team screen:
 const addTeamCode = `
      <h2>Add new team:</h2>
@@ -9,38 +10,12 @@ const addTeamCode = `
                <input type="text" name="teamname" id="teamname" />
           </p>
           <p>
-               <input type="submit" value="Create" />
+               <input class="btn btn-primary" type="submit" value="Create" />
           </p>
      </form>
 `;
 
 let screen = document.getElementById('screen');
-
-function toggleWindow(window) {
-     switch(window){
-          case 'teams':
-               fetchResults();
-               turnOnDiv();
-               break;
-          case 'addteam':
-               addTeam();
-               turnOnDiv();
-               break;
-          default:
-               console.log("default");
-     }
-}
-
-
-function fetchResults(){
-     fetch(baseUrl)
-     .then(function(result){
-          return result.json();
-     })
-     .then(function(json){
-          viewTeams(json);
-     });
-}
 
 function viewTeams(json){
      
@@ -73,13 +48,15 @@ function viewTeams(json){
 
           tableDataTeamName.innerHTML = item.teamName;
           tableDataOptions.innerHTML = `
-               <button id="view" class="opt-btn" onclick="options('view', ${item.teamId})">View</a>
+               <button id="view" class="btn btn-info" onclick="teamDetail(${item.teamId})">View</a>
                `;
 
           teamTable.appendChild(tableRow);
           tableRow.appendChild(tableDataTeamName);
           tableRow.appendChild(tableDataOptions);
      });
+
+     turnOnDiv();
 }
 
 function turnOnDiv(){
@@ -93,11 +70,57 @@ function clearOldData(screen){
 }
 
 function addTeam(){
-     let screen = document.getElementById('screen');
      clearOldData(screen);
      screen.innerHTML += addTeamCode;
+     turnOnDiv();
 }
 
+function PostTeamResponse(info){
+     document.getElementById('screen').innerHTML = addTeamCode + `
+          <h3>Successfully created new Team</h3>
+          <p>
+               <strong>Team name:</strong><br />
+               ${info.teamName}
+          </p>
+     `
+}
+
+function viewTeamDetail(data){
+     screen.innerHTML += `
+          <h2>${data.teamName}</h2>
+          <hr/>
+          <form action="teams.html" method="put" onsubmit="editTeam(${data.teamId})">
+               <p>
+                    <label for="teamname">Edit team name:</label>
+                    <input type="text" name="teamname" id="teamname" />
+               </p>
+               <p>
+                    <input type="submit" class="btn btn-warning" value="Edit" />
+               </p>
+          </form>
+          <button id="delete" class="btn btn-danger" onclick="deleteTeamWarning(${data.teamId})">Delete</button>
+     `;
+}
+
+function deleteTeamWarning(id){
+     screen.innerHTML += `
+          <div class="alert alert-danger" role="alert">
+               <p>
+                    Are you sure you want to delete this team?
+               </p>
+               <button id="delete" class="btn btn-danger" onclick="deleteTeam(${id})">Delete</button>
+               <button id="back" class="btn btn-success" onclick="toggleWindow('teams')">Go back</button>
+          </div>
+     `;
+}
+
+
+
+
+
+// API CALLS
+
+// CREATE TEAM
 function postTeam(event){
      event.preventDefault();
      let team = {
@@ -113,59 +136,21 @@ function postTeam(event){
      })
      .then(res => res.json()
      )
-     .then(data => response(data))
+     .then(data => PostTeamResponse(data))
 }
 
-function response(info){
-     document.getElementById('screen').innerHTML = addTeamCode + `
-          <h3>Successfully created new Team</h3>
-          <p>
-               <strong>Team name:</strong><br />
-               ${info.teamName}
-          </p>
-     `
+// GET ALL TEAMS
+function fetchResults(){
+     fetch(baseUrl)
+     .then(function(result){
+          return result.json();
+     })
+     .then(function(json){
+          viewTeams(json);
+     });
 }
 
-// 4/10/2021 - ADDING VIEW TEAM DETAIL, 
-
-function options(selection, id){
-     switch(selection){
-          case 'view':
-               console.log("view case hit")
-               teamdetail(id);
-               break;
-          default:
-               break;
-     }
-}
-
-function teamdetail(id){
-     clearOldData(document.getElementById('screen'));
-     
-     fetch(`${baseUrl}/${id}`)
-     .then(res => res.json())
-     .then(data => viewTeamDetail(data));
-}
-
-function viewTeamDetail(data){
-     screen.innerHTML += `
-          <h2>${data.teamName}</h2>
-          <hr/>
-          <form action="teams.html" method="put" onsubmit="editTeam(${data.teamId})">
-               <p>
-                    <label for="teamname">Edit team name:</label>
-                    <input type="text" name="teamname" id="teamname" />
-               </p>
-               <p>
-                    <input type="submit" value="Edit" />
-               </p>
-          </form>
-          <button id="delete" onclick="deleteTeamWarning(${data.teamId})">Delete</button>
-     `;
-}
-
-// 4/11/2021 - UPDATE TEAM, DELETE TEAM
-
+// UPDATE TEAM
 function editTeam(id){
      let team = {
           'teamId':id,
@@ -183,22 +168,16 @@ function editTeam(id){
      .then(data => console.log(data))
 }
 
-// DELETE
-
-function deleteTeamWarning(id){
+// GET ONE TEAM
+function teamDetail(id){
+     clearOldData(document.getElementById('screen'));
      
-screen.innerHTML += `
-     <div class="alert alert-danger" role="alert">
-     <p>
-          Are you sure you want to delete this team?
-     </p>
-     <button id="delete" onclick="deleteTeam(${id})">Delete</button>
-     <button id="back" onclick="toggleWindow('teams')">Go back</button>
-     </div>
-`;
-
+     fetch(`${baseUrl}/${id}`)
+     .then(res => res.json())
+     .then(data => viewTeamDetail(data));
 }
 
+// DELETE TEAM
 function deleteTeam(id){
      fetch(`${baseUrl}/${id}`, {
           method: 'DELETE',
