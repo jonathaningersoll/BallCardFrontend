@@ -1,1 +1,8 @@
 http://www.seanlahman.com/baseball-archive/statistics/
+
+search function:
+https://www.pragimtech.com/blog/blazor/search-in-asp.net-core-rest-api/
+
+setting the value of a <select> element using JS:
+https://www.geeksforgeeks.org/how-to-set-the-value-of-a-select-box-element-using-javascript/
+
