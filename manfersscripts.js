@@ -1,4 +1,4 @@
-const baseUrl = "http://localhost:29163/api/manufacturers";
+const baseUrl = "http://localhost:2200/api/manufacturers";
 
 // Add team screen:
 const addManferCode = `

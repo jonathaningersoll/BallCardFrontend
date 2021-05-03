@@ -1,4 +1,4 @@
-const baseUrl = "http://localhost:29163/api/teams";
+const baseUrl = "http://localhost:2200/api/teams";
 
 // Add team screen:
 const addTeamCode = `

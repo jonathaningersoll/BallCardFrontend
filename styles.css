@@ -30,7 +30,6 @@
      padding-top: 40px;
 }
 #screen {
-     display: none;
      border: 2px solid #ee1155;
      border-bottom-left-radius: 20px;
      border-top-right-radius: 20px;
@@ -55,4 +54,20 @@ button:hover {
      padding-left: 8px;
      padding-right: 8px;
      margin-left: 10px;
+}
+
+#inline-btn {
+     display: inline;
+     float: right;
+}
+h2 {
+     display: inline;
+}
+
+#suggestionlist {
+     display: inline-block;
+}
+
+#namesearch {
+     display: inline-block;
 }
